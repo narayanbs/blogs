@@ -33,6 +33,14 @@ $ curl -i example.com
 # Retrieve only the headers
 $ curl -I example.com
 
+# Send header along with GET request
+$ curl -H 'Content-Type: application/json' http;//localhost:4000/login
+
+# Send multiple headers
+$ curl https://reqbin.com/echo/get/json
+   -H "Accept: application/json"
+   -H "Authorization: Bearer {token}"
+
 # Retrieve a page which has moved permanently (301 Moved Permanently)
 # Note: curl google.com (non-www version redirects to www version)
 # so we have to use -L option to follow any redirect till we reach
