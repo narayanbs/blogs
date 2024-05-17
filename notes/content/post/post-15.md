@@ -111,7 +111,11 @@ print("Microseconds:", dt.microsecond)
 
 ```
 # Getting today's date
-today = date.today()
+today = datetime.date.today()
+
+# Getting number of days between date
+dd = datetime.date(2006,12,01)
+(dd - today).days
 
 # Getting current date and time 
 now = datetime.now()
