@@ -111,11 +111,7 @@ print("Microseconds:", dt.microsecond)
 
 ```
 # Getting today's date
-today = datetime.date.today()
-
-# Getting number of days between date
-dd = datetime.date(2006,12,01)
-(dd - today).days
+today = date.today()
 
 # Getting current date and time 
 now = datetime.now()
@@ -126,11 +122,11 @@ current_date = now.date()
 # Getting current time
 current_time = now.time()
 
-# Getting datetime from date and time
-dt = datetime.combine(current_date, current_time)
-
 # Getting current timestamp -- Number of seconds from epoch
 current_timestamp = now.timestamp()
+
+# create datetime by combining date and time
+dt = datetime.combine(current_date, current_time)
 
 # Getting datetime from timestamp
 ts = 1617295943.17321
@@ -158,6 +154,28 @@ print(dt)
 ##### timedelta
 timedelta represents the duration between two dates or datetimes.
 ```
+# Getting timedelta in days i.e number of days between dates
+start_date = date(2006,12,01)
+today = date.today()
+print((today - start_date).days)
+
+# we can also do the same for datetime instances
+start_dt = datetime(2020,11,2,12,45,0)
+today_dt = datetime.now()
+print((today_dt - start_dt).days)
+
+# Getting timedelta in Hours, minutes and seconds
+start_time = datetime.strptime("4:25:40", "%H:%M:%S")
+end_time = datetime.strptime("11:40:10", "%H:%M:%S")
+
+difference = end_time - start_time
+
+# timedelta in seconds, minutes and hours
+seconds = difference.total_seconds()
+minutes = seconds / 60
+hours = seconds / (60 * 60)
+
+# More examples
 from datetime import datetime, timedelta
 
 current_dt = datetime.now()
