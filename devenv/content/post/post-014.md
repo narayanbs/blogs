@@ -1,5 +1,5 @@
 ---
-title: "Python Project Setup"
+title: "Python Project Setup and Dev Config"
 date: 2022-05-03T08:29:03+05:30
 publishdate: 2022-05-03
 lastmod: 2022-05-03
@@ -7,6 +7,36 @@ lastmod: 2022-05-03
 tags: [setup]
 categories: [setup]
 ---
+##### Project setup using pyenv and pip
+```bash
+$ mkdir -p pydjango/{pydjango,tests} && cd pydjango
+$ touch pydjango/__init__.py tests/__init__.py pyproject.toml README.md
+
+	├── pydjango
+	│   └── __init__.py
+	├── pyproject.toml
+	├── README.md
+	└── tests
+	    └── __init__.py
+
+# Specify a python version using pyenv
+$ pyenv local 3.11.0
+
+# create virtual environment and activate
+$ python -m venv myenv
+$ source myenv/bin/activate
+
+# Install dependencies
+$ pip install django~=4.0 black flake8-bugbear isort mypy pytest
+
+# Create test files inside tests
+# Run test using pytest
+$ pytest -v -s
+
+Note: To create a requirements.txt using pip, use the following command
+$ pip freeze > requirements.txt
+```
+
 ##### Project setup using pyenv and poetry
 ```bash
 # specify the python interpreter
@@ -39,50 +69,9 @@ $ deactivate
 # Open the project in VSCode
 $ code .
 ```
-##### Project Setup using venv and pip
-```bash
-$ mkdir myproject
-
-# create pyproject.toml (useful for black formatter configuration)
-$ touch pyproject.toml 
-# create virtual environment and activate it
-$ python -m venv my_env
-$ source my_env/bin/activate
-
-# install dependencies (there is no dev or prod in pip)
-$ pip install black flake8-bugbear mypy isort
-```
 create or reuse the following config files in the project directory
 
-##### .editorconfig
-```
-root = true
-
-[*]
-charset = utf-8
-end_of_line = lf
-indent_style = space
-indent_size = 2
-trim_trailing_whitespace = true
-insert_final_newline = true
-max_line_length = 100
-
-[*.py]
-indent_size = 4
-
-[ext/*.{c,cpp,java,h}]
-indent_style = tab
-indent_size = 4
-
-[**.min.js]
-indent_style = ignore
-insert_final_newline = ignore
-
-[*.{md,Rmd,rst}]
-trim_trailing_whitespace = false
-```
-
-for configuring black we can use pyproject.toml
+For configuring black we use pyproject.toml
 ##### pyproject.toml
 ```
 [tool.black]
@@ -167,17 +156,6 @@ __pypackages__/
 env/
 venv/
 ENV/
-
-
-# sftp configuration file
-sftp-config.json
-
-# Package control specific files Package
-Control.last-run
-Control.ca-list
-Control.ca-bundle
-Control.system-ca-bundle
-GitHub.sublime-settings
 
 # Visual Studio Code #
 .vscode/*
