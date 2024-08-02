@@ -41,7 +41,7 @@ Where m can be 0 or 1. This gives us two different representations of NaN.
 |                   | denormalized                       | normalized                        |
 | ----------------- | ---------------------------------- | --------------------------------- |
 | Single precision  | `+/- 2^-149 to (1-2^-23)*2^-126`   | `+/- 2^-126 to (2-2^23)*2^127`   |
-| Double precision  | `+/- 2^-1074 to (1-2^-52)*2^-1022` | `+/- 2^-1022 to (2-2^-52)*2^1023` |
+| Double precision  | `+/- 2^-1074 to (1-2^-52)*2^-1022` | `+/- 2^-1022 to (2-2^52)*2^1023` |
 | ----------------- | --------                           | ------                            |
 
 why do we get (1-2^-23) or (2-2^23) in the maximum values for denormalized and normalized????
@@ -56,7 +56,7 @@ which is
 
 which can be written as
 
-    0.11111111111111111111111 * 2^128
+    0.111111111111111111111111 * 2^128
 
 this can be converted into decimal as
 
