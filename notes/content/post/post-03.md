@@ -113,9 +113,13 @@ $ curl -O https://cdn.jsdelivr.net/vue/dist/vue.js
 $ curl -LO https://jsdelivr.net/vue/dist/vue.js
 
 # silent mode 
-$ curl -SO https://jsdelivr.net/vue/dist/vue.js
+$ curl -sO https://jsdelivr.net/vue/dist/vue.js
     or
-$ curl -SLO https://jsdelivr.net/vue/dist/vue.js
+$ curl -sLO https://jsdelivr.net/vue/dist/vue.js
+
+# fail silently but show error messages (without showing progress and status messages)
+# -f -> fail fast, -s -> silent mode , -S -> show error
+$ curl -fsSL https://artifacts.elastic.co/GPG-KEY-elasticsearch
 ```
 To download multiple files
 ```bash
