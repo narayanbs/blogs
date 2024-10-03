@@ -11,13 +11,17 @@ Nearly all computers count time from an instant called the Unix epoch. This occu
 
 By definition, Unix time elapses at the same rate as UTC, so a one-second step in UTC corresponds to a one-second step in Unix time, with the exception of leap seconds. Leap seconds are occasionally added to UTC to account for the slowing of the Earth’s rotation but are not added to Unix time.
 
-Number of Seconds since unix epoch (excluding leap seconds) as a floating point number, also known as unix time, can be displayed using python as shown below
+In python, time.time() returns the number of Seconds since unix epoch (excluding leap seconds) as a floating point number.
+This time is also known as unix time. This time is provided according to the computer's system clock. The reason it is a
+floating point is because it provides both seconds and fractions of a second, for higher precision.
+time.time_ns() returns the number of nanoseconds since the epoch.
+
 ```
 >>> import time
 >>> time.time()
 15923423423.234234
 ```
-As we see, Unix time is nearly impossible for a human to parse. So, Unix time is typically converted to UTC, which can then be converted into a local time using time zone offsets.
+As we see, unix time is nearly impossible for a human to parse. So, unix time is typically converted to UTC, which can then be converted into a local time using time zone offsets.
 The Internet Assigned Numbers Authority (IANA) maintains a database of all of the values of time zone offsets. This database is often included with your operating system.
 
 The database contains a copy of all the designated time zones and how many hours and minutes they’re offset from UTC. The offset for Nepal, for example, is +05:45, from UTC.
@@ -91,7 +95,7 @@ print("Seconds:", t.second)
 print("Microseconds:", t.microsecond)
 
 # syntax to create datetime object
-datetime(year, month, day, hour, minute, secod, microsecond, tzinfo)
+datetime(year, month, day, hour, minute, second, microsecond, tzinfo)
 
 dt = datetime(year=2021, month=2, day=17, hour=13, minute=47, second=34)
 print(dt)
