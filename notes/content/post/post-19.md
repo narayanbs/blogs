@@ -51,6 +51,8 @@ Epoll\* system calls help us to create and manage the context in the kernel. We 
 
 We can even add and remove file descriptor while waiting.
 
+**Edge triggered vs Level-triggered**  
+
 epoll is an event poll and can be used either as an Edge or Level Triggered interface and scales well to large numbers of watched
 file descriptors.
 
@@ -63,6 +65,153 @@ You have registered one pipe with epoll for reading. The application is able to 
 
 Assume someone has written 5Kb data into the pipe and it is available to read. When the application calls epoll_wait, it will return immediately as the data is available. So, the application reads 1Kb data and again calls the epoll_wait. If you have configured epoll as edge-triggered, then epoll won’t return until someone writes (new events) again into the pipe even though 4Kb data is remaining for reading. Whereas in the level-triggered, epoll_wait will return immediately as 4Kb data is remaining to read. So, the application can call epoll_wait for another 4 times without the new events
 
+
+Example:
+Level Triggered
+~~~
+#include <sys/epoll.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <fcntl.h>
+#include <string.h>
+
+int main() {
+    int epfd = epoll_create1(0);
+    int fd = /* your file descriptor, e.g., socket or pipe */;
+    
+    struct epoll_event ev;
+    ev.events = EPOLLIN; // Listen for input
+    ev.data.fd = fd;
+    
+    epoll_ctl(epfd, EPOLL_CTL_ADD, fd, &ev);
+    
+    while (1) {
+        struct epoll_event events[10];
+        int n = epoll_wait(epfd, events, 10, -1);
+        
+        for (int i = 0; i < n; i++) {
+            if (events[i].events & EPOLLIN) {
+                char buf[1024];
+                ssize_t count = read(events[i].data.fd, buf, sizeof(buf));
+                if (count <= 0) {
+                    // Handle error or closed connection
+                } else {
+                    // Process data
+                }
+            }
+        }
+    }
+    close(epfd);
+    return 0;
+}
+~~~
+In level-triggered mode, the epoll_wait function will continue to return the file descriptor as long as the condition is true. 
+For example, if there’s data to read from a socket, the socket will be reported as ready until the data is completely read.
+
+Edge Triggered
+~~~
+#include <sys/epoll.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <fcntl.h>
+#include <string.h>
+
+int main() {
+    int epfd = epoll_create1(0);
+    int fd = /* your file descriptor, e.g., socket or pipe */;
+    
+    struct epoll_event ev;
+    ev.events = EPOLLIN | EPOLLET; // Enable edge-triggered
+    ev.data.fd = fd;
+    
+    epoll_ctl(epfd, EPOLL_CTL_ADD, fd, &ev);
+    
+    // Make sure the file descriptor is set to non-blocking
+    fcntl(fd, F_SETFL, fcntl(fd, F_GETFL) | O_NONBLOCK);
+    
+    while (1) {
+        struct epoll_event events[10];
+        int n = epoll_wait(epfd, events, 10, -1);
+        
+        for (int i = 0; i < n; i++) {
+            if (events[i].events & EPOLLIN) {
+                char buf[1024];
+                while (1) {
+                    ssize_t count = read(events[i].data.fd, buf, sizeof(buf));
+                    if (count == -1) {
+                        // Handle EAGAIN or EWOULDBLOCK
+                        if (errno == EAGAIN) {
+                            break; // No more data to read
+                        }
+                        // Handle error
+                    } else if (count == 0) {
+                        // Handle closed connection
+                        break;
+                    } else {
+                        // Process data
+                    }
+                }
+            }
+        }
+    }
+    close(epfd);
+    return 0;
+}
+~~~
+
+In edge-triggered mode, the epoll_wait function only reports the file descriptor as ready when a state change occurs. 
+This means you only get notified when a new event happens, not continuously. For instance, after you read the data from a socket, 
+you won’t be notified again until more data arrives.
+
+`Point to Note: edge-triggered mode can potentially lead to data loss if not handled correctly.`
+
+Yes, using edge-triggered (ET) mode in epoll can potentially lead to data loss if not handled correctly. Here’s why:
+
+In edge-triggered mode, `epoll_wait` notifies you only when a state change occurs (e.g., when data becomes available to read). Once you read all the data from a file descriptor, if no more data is available, you won't receive another notification until new data arrives. 
+
+**Potential Pitfalls Leading to Data Loss**
+
+1. **Non-blocking I/O**: 
+   - If you read data from a socket in non-blocking mode and there's more data to read than you can handle in one go, you might not get notified again until more data arrives. If your application isn't set up to keep checking for available data, you could miss data that arrives after your last read.
+
+2. **Handling EAGAIN**:
+   - When you read and get `EAGAIN` or `EWOULDBLOCK`, you need to stop reading. If you don’t check for more data after the first read, any incoming data might be lost because you won’t get another notification until the next state change.
+
+3. **Multiple Notifications**:
+   - With edge-triggered, if your application logic is not robust, you might not handle all available data in one go. If there’s a burst of data and you only read part of it, subsequent data can arrive before you have a chance to process the first batch, leading to missed notifications.
+
+### Best Practices to Avoid Data Loss
+
+1. **Use a Loop**:
+   - Always read in a loop until you receive `EAGAIN`. This ensures that you consume all available data before returning to the event loop.
+
+   ```c
+   while (1) {
+       ssize_t count = read(fd, buf, sizeof(buf));
+       if (count == -1) {
+           if (errno == EAGAIN) {
+               break; // No more data
+           }
+           // Handle error
+       } else if (count == 0) {
+           // Handle closed connection
+           break;
+       } else {
+           // Process data
+       }
+   }
+   ```
+
+2. **Non-blocking Sockets**:
+   - Ensure your sockets are set to non-blocking mode so that you can handle the situation where there’s no data available gracefully.
+
+3. **Monitor Write Events**:
+   - If you're writing data to a socket, make sure to monitor `EPOLLOUT` events and check whether the socket is ready to send more data.
+
+4. **Consider Using Level-Triggered**:
+   - If your application can tolerate the additional notifications and is simpler to manage, consider using level-triggered mode, which avoids the risk of missing events due to state changes.
+
+By being cautious and implementing robust logic around your event handling, you can mitigate the risks associated with edge-triggered notifications and avoid data loss.
 
 #### select vs poll
 
