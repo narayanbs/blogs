@@ -14,10 +14,10 @@ definition of bases - we have 64 characters that represent numbers.
 The Base64 Character set contains
 * 26 uppercase letters
 * 26 lowercase letters
-* + and / for new lines (some implementations use different characters)
+* '+' and '/' for new lines (some implementations use different characters)
 
 Each Base64 character represents 6 bits of information
-2^6 - 64
+2^6 ---> 64
 
 Note: It is not an encryption algorithm and should not be used for security purposes.
 
