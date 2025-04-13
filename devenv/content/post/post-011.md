@@ -13,7 +13,7 @@ ex: g++ main.cpp display.cpp shader.cpp mesh.cpp -lSDL2 -lGL -lGLEW -o main
 
 ### OpenGL compilation commands with glfw and glad
 ```bash
-g++ main.cpp -Ibuild/include glad.c -lglfw -ldl -o main
+g++ main.cpp -Ibuild/include glad.c -lGL -lglfw -ldl -o main
 ```
 
 ### glfw installation
