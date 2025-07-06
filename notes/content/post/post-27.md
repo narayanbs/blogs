@@ -15,6 +15,11 @@ sudo apt install git
 
 ### Configuration 
 ---------------
+When git looks for configuration settings, it checks in the following order
+* local
+* global
+* system
+
 *configuration files:*
 ~~~
 system ---- /etc/gitconfig 				-- Entire system
@@ -91,8 +96,8 @@ git commit -m "Updated config files"
 git commit -am "Updated config files"
 ~~~
 
-### Checking status of files
--------------------------
+### Checking status of files in workspace/staging
+--------------------------------------------------
 ~~~
 $ git status 
 
@@ -196,6 +201,9 @@ Note: for new files that are not tracked, they need to be explicitly added using
 ---------------------
 To remove a file from Git, you have to remove it from your tracked files (more accurately, remove it from your staging area) 
 and then commit. 
+There are two options
+
+1) Remove the file from workspace using rm and stage/commit the changes using git add/commit (or git commit -am)
 ~~~
 $ rm PROJECTS.md
 
@@ -212,8 +220,11 @@ no changes added to commit (use "git add" and/or "git commit -a")
 
 $ git commit -am "Removed PROJECTS.md"
 
-	or
+~~~
 
+2) Use `git rm <file>` to remove the file from workspace and staging, then use git commit to commit the changes.
+
+~~~
 $ git rm PROJECTS.md
 rm 'PROJECTS.md'
 
