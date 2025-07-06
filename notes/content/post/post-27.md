@@ -504,3 +504,61 @@ This command lists all stashed changesets.
 
 Command: git stash drop  
 This command discards the most recently stashed changeset.
+
+### Understanding git reset command
+-------------------------------------
+The `git reset` command is a versatile tool in Git that allows you to undo changes in your repository. It can be used in different ways depending on the options you provide. Here’s a breakdown of its main functionalities:
+
+### Basic Usage
+The command can be used in three primary modes, each affecting the working directory, staging area, and commit history differently:
+
+1. **`git reset --soft <commit>`**:
+   - Moves the HEAD pointer to the specified commit.
+   - Keeps changes in the staging area (index).
+   - Useful for undoing commits while retaining the changes for further editing.
+
+2. **`git reset --mixed <commit>`** (default behavior if no option is specified):
+   - Moves the HEAD pointer to the specified commit.
+   - Keeps changes in the working directory but unstages them (removes them from the staging area).
+   - Useful for undoing commits and preparing to make new changes without losing any work.
+
+3. **`git reset --hard <commit>`**:
+   - Moves the HEAD pointer to the specified commit.
+   - Discards all changes in both the staging area and the working directory.
+   - This option is destructive and should be used with caution, as it permanently removes any changes made after the specified commit.
+
+### Example
+Assuming you have the following commit history:
+
+```
+A -- B -- C -- D (HEAD)
+```
+
+- **`git reset --soft B`**:
+  - Result: 
+    ```
+    A -- B (HEAD)
+    ```
+  - Changes from commits C and D are still staged.
+
+- **`git reset --mixed B`**:
+  - Result:
+    ```
+    A -- B (HEAD)
+    ```
+  - Changes from commits C and D are in the working directory but not staged.
+
+- **`git reset --hard B`**:
+  - Result:
+    ```
+    A -- B (HEAD)
+    ```
+  - Changes from commits C and D are permanently lost.
+
+### Use Cases
+- **Undoing Commits**: You can use `git reset` to undo one or more commits while deciding what to do with the changes.
+- **Reorganizing Commits**: It allows you to rework your commit history before pushing changes to a remote repository.
+- **Cleaning Up**: The `--hard` option is useful for cleaning up your working directory if you want to discard changes completely.
+
+### Caution
+Always be careful when using `git reset`, especially with the `--hard` option, as it can lead to loss of work that cannot be recovered.

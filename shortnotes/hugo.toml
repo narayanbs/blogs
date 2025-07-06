@@ -8,7 +8,7 @@ theme = "minimal-bootstrap-hugo-theme"
   category = "categories"
 
 [permalinks]
-  post = "/:filename/"
+  post = "/:contentbasename/"
 
 [params]
   description = "Some description"
