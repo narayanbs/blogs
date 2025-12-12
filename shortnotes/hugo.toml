@@ -33,7 +33,7 @@ theme = "minimal-bootstrap-hugo-theme"
 
 [menu]
   [[menu.nav]]
-  name = "Notes"
+  name = "Short Notes"
   url = "/"
   weight = 1
   [[menu.nav]]
